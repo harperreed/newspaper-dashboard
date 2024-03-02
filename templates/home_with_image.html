@@ -2,7 +2,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="refresh" content="300">
     <meta charset="UTF-8">
     <title>Newspapers</title>
     <style>
@@ -30,6 +29,19 @@
     </style>
 </head>
 <body>
-    <img src="{{ url_for('static', filename=image_path.split('/')[-1]) }}" alt="PDF Page as Image">
+    <img id="pdfImage" src="{{ url_for('static', filename=image_path.split('/')[-1]) }}" alt="PDF Page as Image">
+    <script>
+        function updateImage() {
+            var img = document.getElementById('pdfImage');
+            var date = new Date();
+            // Append a timestamp as a query parameter
+            url = "{{ url_for('static', filename=image_path.split('/')[-1]) }}" + "?t=" + date.getTime();
+            console.log(`Updating image to ${url}`)
+            img.src = url;
+        }
+
+        // Update the image every 300 seconds (5 minutes)
+        setInterval(updateImage, 300000);
+    </script>
 </body>
 </html>

@@ -1,4 +1,5 @@
 from flask import Flask, render_template, send_file
+from flask import Flask, render_template, send_file, send_from_directory
 from pdf2image import convert_from_path
 from bs4 import BeautifulSoup
 
@@ -17,11 +18,13 @@ with open("news.yaml", 'r') as stream:
         print(exc)
         NEWS_URLS = []
 
+CACHE_TIME = 300  # Cache for 5 minutes
+
 def select_news():
-
-    index = (datetime.now().minute // 5) % len(NEWS_URLS)
-
-
+    current_time = datetime.now()
+    time_delta = (current_time.hour * 3600 + current_time.minute * 60 + current_time.second) % CACHE_TIME
+    index = time_delta // (CACHE_TIME // len(NEWS_URLS))
+    print(f"Selected index: {index}")
     return NEWS_URLS[index]
 
 def get_cover_url(url):
@@ -47,13 +50,32 @@ def get_cover_url(url):
 
 @app.route('/')
 def home():
+    return render_template('home_with_image.html', image_path="current_image.jpg")
+
+@app.route('/static/current_image.jpg')
+def current_image():
+    # Define a cache timeout (in seconds)
     news_url = select_news()
-    print(news_url)
+    cache_timeout = CACHE_TIME
+
+    # Check if the cached image is recent enough
+    image_path = 'static/current_image.jpg'
+    if os.path.exists(image_path):
+        modification_time = datetime.fromtimestamp(os.path.getmtime(image_path))
+        if (datetime.now() - modification_time).seconds < cache_timeout:
+            time_left = cache_timeout - (datetime.now() - modification_time).seconds
+            print(f"Using cached image. Cache time left: {time_left} seconds")
+            print(f"Selected URL: {news_url}")
+            print(f"Selected index: {NEWS_URLS.index(news_url)}")
+            print(f"Cache for {cache_timeout} seconds")
+            return send_from_directory('static', 'current_image.jpg')
+            return send_from_directory('static', 'current_image.jpg')
+
+
     # Check if the URL is a frontpages.com URL or a PDF URL
     if "frontpages.com" in news_url:
         # Download the image from frontpages.com
         image_response = requests.get(get_cover_url(news_url))
-        image_path = 'static/current_image.jpg'
         with open(image_path, 'wb') as f:
             f.write(image_response.content)
     else:
@@ -68,16 +90,13 @@ def home():
         # Convert the first page of the PDF to an image
         images = convert_from_path(temp_pdf, first_page=1, last_page=1)
         first_page_image = images[0]
-        image_path = 'static/current_image.jpg'
         first_page_image.save(image_path, 'JPEG')
 
         # Remove the temporary PDF file
         os.remove(temp_pdf)
 
-
-
     # Render template with the path to the image
-    return render_template('home_with_image.html', image_path=image_path)
+    return send_from_directory('static', 'current_image.jpg')
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True)
