@@ -19,7 +19,7 @@ with open("news.yaml", 'r') as stream:
 
 def select_news():
 
-    index = (datetime.now().minute // 10) % len(NEWS_URLS)
+    index = (datetime.now().minute // 5) % len(NEWS_URLS)
 
 
     return NEWS_URLS[index]
