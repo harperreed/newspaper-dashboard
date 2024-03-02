@@ -2,3 +2,4 @@ Flask
 requests
 PyYAML
 pdf2image
+beautifulsoup4
