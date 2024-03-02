@@ -1,0 +1,9 @@
+# pdfs.yml
+pdf_urls:
+  # - https://cdn.freedomforum.org/dfp/pdf1/NY_NYT.pdf
+  # - https://cdn.freedomforum.org/dfp/pdf1/IL_CT.pdf
+  # - https://cdn.freedomforum.org/dfp/pdf1/IL_CST.pdf
+  # - https://cdn.freedomforum.org/dfp/pdf1/WSJ.pdf
+  # - https://cdn.freedomforum.org/dfp/pdf1/CHI_CD.pdf
+  - https://www.frontpages.com/mainichi-shinbun/
+  # - https://www.frontpages.com/financial-times/
