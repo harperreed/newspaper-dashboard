@@ -4,6 +4,8 @@ This Flask application dynamically selects a PDF from a predefined list and disp
 
 This is perfect for displaying a digital newspaper on a large screen in a public space, such as a library or community center.
 
+There are many other projects that accompolist the same thing. This one is mine. It is less good than the others. lol
+
 ## Features
 
 - Dynamically selects a PDF from a list stored in a YAML file.
