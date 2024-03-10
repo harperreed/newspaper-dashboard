@@ -3,10 +3,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Newspapers</title>
     <style>
         /* Reset margin and padding for all elements */
-        *, *:before, *:after {
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -24,24 +25,24 @@
             display: block; /* Remove default margin */
             width: 100vw; /* 100% of the viewport width */
             height: 100vh; /* 100% of the viewport height */
-
+            object-fit: contain; /* Maintain aspect ratio and fit within viewport */
         }
     </style>
 </head>
 <body>
-    <img id="pdfImage" src="{{ url_for('static', filename=image_path.split('/')[-1]) }}" alt="PDF Page as Image">
+    <img id="pdfImage" src="{{ url_for('static', filename=image_path) }}" alt="PDF Page as Image">
+
     <script>
         function updateImage() {
             var img = document.getElementById('pdfImage');
-            var date = new Date();
-            // Append a timestamp as a query parameter
-            url = "{{ url_for('static', filename=image_path.split('/')[-1]) }}" + "?t=" + date.getTime();
-            console.log(`Updating image to ${url}`)
+            var timestamp = new Date().getTime();
+            var url = "{{ url_for('static', filename=image_path) }}" + "?t=" + timestamp;
+            console.log("Updating image to " + url);
             img.src = url;
         }
 
-        // Update the image every 300 seconds (5 minutes)
-        setInterval(updateImage, 300000);
+        // Update the image every 5 minutes (300000 milliseconds)
+        setInterval(updateImage, {{ cache_time * 1000 }});
     </script>
 </body>
 </html>

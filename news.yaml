@@ -1,12 +1,13 @@
 # pdfs.yml
 pdf_urls:
-  - https://cdn.freedomforum.org/dfp/pdf1/NY_NYT.pdf
+  # - https://cdn.freedomforum.org/dfp/pdf1/NY_NYT.pdf
   - https://cdn.freedomforum.org/dfp/pdf1/IL_CT.pdf
   - https://cdn.freedomforum.org/dfp/pdf1/IL_CST.pdf
-  - https://cdn.freedomforum.org/dfp/pdf1/WSJ.pdf
+  # - https://cdn.freedomforum.org/dfp/pdf1/WSJ.pdf
   - https://www.frontpages.com/mainichi-shinbun/
   - https://www.frontpages.com/financial-times/
   - https://www.frontpages.com/the-japan-times/
   - https://www.frontpages.com/yomiuri-shinbun/
   - https://www.frontpages.com/the-guardian-usa/
-  - https://www.frontpages.com/the-washington-post/
+  # - https://www.frontpages.com/the-washington-post/
+cache_time: 600  # Cache for 10 minutes
