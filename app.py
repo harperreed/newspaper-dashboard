@@ -42,7 +42,7 @@ def get_cover_url(url):
 
 @app.route('/')
 def home():
-    return render_template('home_with_image.html', image_path="current_image.jpg")
+    return render_template('home_with_image.html', image_path="current_image.jpg", cache_time=CACHE_TIME)
 
 @app.route('/static/current_image.jpg')
 def current_image():
