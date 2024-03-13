@@ -3,3 +3,4 @@ requests
 PyYAML
 pdf2image
 beautifulsoup4
+flask_socketio
