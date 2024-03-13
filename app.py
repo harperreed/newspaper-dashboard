@@ -12,7 +12,7 @@ app = Flask(__name__)
 socketio = SocketIO(app)
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # Load configuration from YAML file
@@ -63,23 +63,28 @@ def home():
 @socketio.on('connect')
 def handle_connect():
     logger.info('Client connected')
-    emit('update_image', {'image_path': url_for('static', filename='current_image.jpg')})
+    image_path = 'static/current_image.jpg'
+
+    update_image()
+
+    # emit('update_image', {'image_path': url_for('static', filename=image_path)})
 
 def update_image():
     with app.app_context():
         news_url = select_news()
-        image_path = 'static/current_image.jpg'
+        # Generate a unique filename based on date and URL hash
+        date_str = datetime.now().strftime('%Y-%m-%d')
+        url_hash = hash(news_url)
+        image_filename = f"{date_str}_{url_hash}.jpg"
+        image_path = os.path.join('static', image_filename)
+        logger.info("Updating image")
 
-        # Check if the cached image is recent enough
+        # Check if the image for today's date and URL hash already exists
         if os.path.exists(image_path):
-            modification_time = datetime.fromtimestamp(os.path.getmtime(image_path))
-            if (datetime.now() - modification_time).seconds < CACHE_TIME:
-                time_left = CACHE_TIME - (datetime.now() - modification_time).seconds
-                logger.info(f"Using cached image. Cache time left: {time_left} seconds")
-                logger.info(f"Selected URL: {news_url}")
-                logger.info(f"Selected index: {NEWS_URLS.index(news_url)}")
-                logger.info(f"Cache for {CACHE_TIME} seconds")
-                return
+            logger.info(f"Using cached image: {image_path}")
+            return
+
+        logger.info(f"Grabbing url {news_url} to update image.")
 
         # Check if the URL is a frontpages.com URL or a PDF URL
         if "frontpages.com" in news_url:
@@ -108,7 +113,8 @@ def update_image():
             except (requests.RequestException, Exception) as e:
                 logger.error(f"Error processing PDF: {e}")
 
-        socketio.emit('update_image', {'image_path': '/static/current_image.jpg'})
+        # Emit the event to update the image on the client side with the new path
+        socketio.emit('update_image', {'image_path': url_for('static', filename=image_filename)})
 
 def background_thread():
     while True:
