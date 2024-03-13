@@ -28,21 +28,21 @@
 
         }
     </style>
-</head>
-<body>
-    <img id="pdfImage" src="{{ url_for('static', filename=image_path) }}" alt="PDF Page as Image">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.js"></script>
+   </head>
+   <body>
+     <img id="pdfImage" src="{{ url_for('static', filename=image_path) }}" alt="PDF Page as Image">
 
-    <script>
-        function updateImage() {
-            var img = document.getElementById('pdfImage');
-            var timestamp = new Date().getTime();
-            var url = "{{ url_for('static', filename=image_path) }}" + "?t=" + timestamp;
-            console.log("Updating image to " + url);
-            img.src = url;
-        }
+     <script>
+       var socket = io();
 
-        // Update the image every 5 minutes (300000 milliseconds)
-        setInterval(updateImage, {{ cache_time * 1000 }});
-    </script>
-</body>
-</html>
+       socket.on('update_image', function(data) {
+         var img = document.getElementById('pdfImage');
+         var timestamp = new Date().getTime();
+         var url = data.image_path + "?t=" + timestamp;
+         console.log("Updating image to " + url);
+         img.src = url;
+       });
+     </script>
+   </body>
+   </html>
